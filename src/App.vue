@@ -8,10 +8,14 @@ import Footer from './components/Footer.vue';
 
 const guitarras = ref([])
 const carrito = ref([])
+const guitarra = ref({})
+
 
 
 onMounted(() => {
   guitarras.value = db;
+  guitarra.value = db[3]
+
 })
 
 
@@ -29,12 +33,25 @@ const agregarCarrito = (guitarra) => {
 }
 
 
-const decrementarCantidad = () => {
-  console.log('Menos...');
+const decrementarCantidad = (id) => {
+  const index = carrito.value.findIndex(producto => producto.id === id)
+  if(carrito.value[index].cantidad <= 1) return
+  carrito.value[index].cantidad--
 }
 
-const incrementarCantidad = () => {
-  console.log('Más...');
+const incrementarCantidad = (id) => {
+  const index = carrito.value.findIndex(producto => producto.id === id)
+  if(carrito.value[index].cantidad >= 5) return
+  carrito.value[index].cantidad++
+}
+
+
+const eliminarProducto = (id) => {
+  carrito.value = carrito.value.filter(producto => producto.id !== id)
+}
+
+const vaciarCarrito = () => {
+  carrito.value = []
 }
 
 
@@ -45,8 +62,12 @@ const incrementarCantidad = () => {
 
   <Header
     :carrito="carrito"
+    :guitarra="guitarra"
     @decrementar-cantidad="decrementarCantidad"
     @incrementar-cantidad="incrementarCantidad"
+    @agregar-carrito="agregarCarrito"
+    @eliminar-producto="eliminarProducto"
+    @vacias-carrito="vaciarCarrito"
   />
 
   <main class="container-xl mt-5">
