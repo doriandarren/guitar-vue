@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted,  } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import {db} from './data/guitarras';
 import Guitarra from './components/Guitarra.vue';
 import Header from './components/Header.vue';
@@ -10,13 +10,31 @@ const guitarras = ref([])
 const carrito = ref([])
 const guitarra = ref({})
 
+//Watch mira el carrito siempre
+watch(carrito, () => {
+  guardarLocalStorage();
+}, {
+  deep: true
+})
 
 
 onMounted(() => {
   guitarras.value = db;
   guitarra.value = db[3]
 
+  const carritoStorage = localStorage.getItem('carrito')
+
+  if(carritoStorage){
+    carrito.value = JSON.parse(carritoStorage)
+  }
+
 })
+
+
+
+const guardarLocalStorage = () => {
+  localStorage.setItem('carrito', JSON.stringify(carrito.value))
+}
 
 
 const agregarCarrito = (guitarra) => {
@@ -29,6 +47,8 @@ const agregarCarrito = (guitarra) => {
     guitarra.cantidad = 1;
     carrito.value.push(guitarra);
   }
+
+  guardarLocalStorage();
 
 }
 
